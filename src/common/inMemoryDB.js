@@ -1,32 +1,52 @@
 const User = require('../resources/users/user.model');
-const DB = [];
+// const Task = require('../resources/tasks/task.model');
+const DB_USERS = [];
+const DB_TASKS = [];
 
-DB.push(new User(), new User(), new User(), new User());
+DB_USERS.push(new User(), new User(), new User(), new User());
 
-const getAllUsers = async () => DB.slice(0);
+const getAllUsers = async () => DB_USERS.slice(0);
 
-const getUser = async id => DB.filter(el => el.id === id)[0];
+const getAllTasks = async boardId =>
+  DB_TASKS.filter(el => el.id === boardId)[0];
+
+const getUser = async id => DB_USERS.filter(el => el.id === id)[0];
+
+const getTask = async id => DB_TASKS.filter(el => el.id === id)[0];
 
 const createUser = async user => {
-  DB.push(user);
+  DB_USERS.push(user);
   return user;
 };
 
+const createTask = async (boardId, task) => {
+  DB_TASKS.push(task);
+  return task;
+};
+
 const putUser = async (id, user) => {
-  const changePoz = DB.find(item => item.id === id);
+  const changePoz = DB_USERS.find(item => item.id === id);
   if (changePoz !== -1) {
     changePoz.login = user.login;
     changePoz.password = user.pasword;
     changePoz.name = user.name;
-    //  DB.splice(delPoz, 1);
   }
   return user;
 };
 
 const deleteUser = async id => {
-  const delPoz = DB.findIndex(item => item.id === id);
-  if (delPoz !== -1) DB.splice(delPoz, 1);
-  return DB.slice(0);
+  const delPoz = DB_USERS.findIndex(item => item.id === id);
+  if (delPoz !== -1) DB_USERS.splice(delPoz, 1);
+  return DB_USERS.slice(0);
 };
 
-module.exports = { getAllUsers, getUser, createUser, putUser, deleteUser };
+module.exports = {
+  getAllUsers,
+  getUser,
+  createUser,
+  putUser,
+  deleteUser,
+  getAllTasks,
+  getTask,
+  createTask
+};
