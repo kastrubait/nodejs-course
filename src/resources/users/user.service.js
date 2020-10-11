@@ -6,8 +6,8 @@ const get = userId => usersRepo.get(userId);
 
 const create = userData => usersRepo.create(userData);
 
-const put = (userId, userData) => usersRepo.put(userId, userData);
+const update = (userId, userData) => usersRepo.update(userId, userData);
 
 const remove = userId => usersRepo.remove(userId);
 
-module.exports = { getAll, get, create, put, remove };
+module.exports = { getAll, get, create, update, remove };

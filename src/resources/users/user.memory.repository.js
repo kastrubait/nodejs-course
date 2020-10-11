@@ -12,8 +12,8 @@ const get = async userId => {
 
 const create = async userData => DB.createUser(userData);
 
-const put = async (userId, userData) => {
-  const user = DB.putUser(userId, userData);
+const update = async (userId, userData) => {
+  const user = DB.updateUser(userId, userData);
   if (!user) {
     throw new Error(`User id=${userId} was not found`);
   }
@@ -28,4 +28,4 @@ const remove = async userId => {
   return DB.deleteUser(userId);
 };
 
-module.exports = { getAll, get, create, put, remove };
+module.exports = { getAll, get, create, update, remove };

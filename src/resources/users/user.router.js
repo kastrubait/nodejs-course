@@ -31,7 +31,7 @@ router
   })
   .put(async (req, res) => {
     try {
-      const user = await usersService.put(req.params.userId, req.body);
+      const user = await usersService.update(req.params.userId, req.body);
       res.json(User.toResponse(user));
     } catch (e) {
       res.status(404).send(e.message);
