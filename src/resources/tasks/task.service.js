@@ -1,9 +1,14 @@
 const tasksRepo = require('./task.memory.repository');
 
-const getAll = boardId => tasksRepo.getAll(boardId);
+const getAll = async boardId => tasksRepo.getAll(boardId);
 
-const get = id => tasksRepo.get(id);
+const get = async (boardId, taskId) => tasksRepo.get(boardId, taskId);
 
-const create = (boardId, task) => tasksRepo.create(boardId, task);
+const create = async (boardId, taskData) => tasksRepo.create(boardId, taskData);
 
-module.exports = { getAll, get, create };
+const put = async (boardId, taskId, userData) =>
+  tasksRepo.put(boardId, taskId, userData);
+
+const remove = async (boardId, taskId) => tasksRepo.remove(boardId, taskId);
+
+module.exports = { getAll, get, create, put, remove };

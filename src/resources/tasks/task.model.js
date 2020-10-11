@@ -4,8 +4,8 @@ class Task {
   constructor({
     id = uuid(),
     title = 'task_#',
-    order = '',
-    description = '',
+    order = '1',
+    description = 'description',
     userId = '',
     boardId = '',
     columnId = ''
@@ -20,8 +20,8 @@ class Task {
   }
 
   static toResponse(task) {
-    const { id, title, order, description, userId } = task;
-    return { id, title, order, description, userId };
+    const { id, title, order, description, userId, boardId, columnId } = task;
+    return { id, title, order, description, userId, boardId, columnId };
   }
 }
 
