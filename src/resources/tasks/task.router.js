@@ -45,7 +45,7 @@ router
   })
   .put(async (req, res) => {
     try {
-      const task = await tasksService.put(
+      const task = await tasksService.update(
         req.params.boardId,
         req.params.taskId,
         req.body
