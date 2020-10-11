@@ -1,21 +1,10 @@
-const User = require('../resources/users/user.model');
-const Board = require('../resources/boards/board.model');
-// const Column = require('../resources/columns/column.model');
-// const Task = require('../resources/tasks/task.model');
 const DB_USERS = [];
 const DB_BOARDS = [];
-// const DB_COLUMNS = [];
-const DB_TASKS = [];
-
-DB_USERS.push(new User());
-DB_BOARDS.push(new Board());
-// DB_COLUMNS.push(new Column(), new Column(), new Column());
+let DB_TASKS = [];
 
 const getAllUsers = async () => DB_USERS.slice(0);
 
 const getAllBoards = async () => DB_BOARDS.slice(0);
-
-// const getAllColumns = async () => DB_COLUMNS.slice(0);
 
 const getAllTasks = async id => {
   const tasks = await DB_TASKS.slice(0);
@@ -44,7 +33,7 @@ const createTask = async task => {
   return task;
 };
 
-const putUser = async (userId, user) => {
+const updateUser = async (userId, user) => {
   const changePoz = DB_USERS.find(item => item.id === userId);
   if (changePoz !== -1) {
     changePoz.login = user.login;
@@ -54,7 +43,7 @@ const putUser = async (userId, user) => {
   return user;
 };
 
-const putTask = async (boardId, taskId, task) => {
+const updateTask = async (boardId, taskId, task) => {
   const changePoz = DB_TASKS.findIndex(item => item.id === taskId);
   if (changePoz !== -1) {
     const modified = { ...DB_TASKS[changePoz], ...task };
@@ -63,7 +52,7 @@ const putTask = async (boardId, taskId, task) => {
   return task;
 };
 
-const putBoard = async (boardId, board) => {
+const updateBoard = async (boardId, board) => {
   const changePoz = DB_BOARDS.find(item => item.id === boardId);
   if (changePoz !== -1) {
     changePoz.title = board.title;
@@ -86,10 +75,10 @@ const deleteUser = async userId => {
 const deleteBoard = async boardId => {
   const delPozBoard = DB_BOARDS.findIndex(item => item.id === boardId);
   if (delPozBoard !== -1) {
-    DB_TASKS.reduce((newArray, item) => {
-      return item.boardId === boardId ? newArray : [...newArray, item];
-    }, []);
-    console.log(DB_TASKS);
+    DB_TASKS = DB_TASKS.filter(item => item.boardId !== boardId);
+    // DB_TASKS = DB_TASKS.reduce((newArray, item) => {
+    //   return item.boardId === boardId ? newArray : [...newArray, item];
+    // }, []);
     DB_BOARDS.splice(delPozBoard, 1);
   }
   return DB_BOARDS.slice(0);
@@ -107,17 +96,16 @@ module.exports = {
   getAllUsers,
   getUser,
   createUser,
-  putUser,
+  updateUser,
   deleteUser,
   getAllTasks,
   getTask,
   createTask,
-  putTask,
+  updateTask,
   deleteTask,
   getAllBoards,
   addBoard,
   getBoard,
-  putBoard,
+  updateBoard,
   deleteBoard
-  // getAllColumns
 };
