@@ -38,7 +38,7 @@ router
   })
   .put(async (req, res) => {
     try {
-      const board = await boardsService.put(req.params.boardId, req.body);
+      const board = await boardsService.update(req.params.boardId, req.body);
       res.json(Board.toResponse(board));
     } catch (e) {
       res.status(404).send(e.message);
