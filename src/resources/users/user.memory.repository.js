@@ -2,12 +2,30 @@ const DB = require('../../common/inMemoryDB');
 
 const getAll = async () => DB.getAllUsers();
 
-const get = async id => DB.getUser(id);
+const get = async userId => {
+  const user = DB.getUser(userId);
+  if (!user) {
+    throw new Error(`User id=${userId} was not found`);
+  }
+  return user;
+};
 
-const create = async user => DB.createUser(user);
+const create = async userData => DB.createUser(userData);
 
-const put = async (id, user) => DB.putUser(id, user);
+const put = async (userId, userData) => {
+  const user = DB.putUser(userId, userData);
+  if (!user) {
+    throw new Error(`User id=${userId} was not found`);
+  }
+  return user;
+};
 
-const delete1 = async id => DB.deleteUser(id);
+const remove = async userId => {
+  const user = DB.getUser(userId);
+  if (!user) {
+    throw new Error(`User id=${userId} was not found`);
+  }
+  return DB.deleteUser(userId);
+};
 
-module.exports = { getAll, get, create, put, delete1 };
+module.exports = { getAll, get, create, put, remove };

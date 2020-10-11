@@ -12,18 +12,18 @@ router
     const user = await usersService.create(
       new User({
         login: req.body.login,
-        password: req.body.password,
-        name: req.body.name
+        name: req.body.name,
+        password: req.body.password
       })
     );
     res.json(User.toResponse(user));
   });
 
 router
-  .route('/:id')
+  .route('/:userId')
   .get(async (req, res) => {
     try {
-      const user = await usersService.get(req.params.id);
+      const user = await usersService.get(req.params.userId);
       res.json(User.toResponse(user));
     } catch (e) {
       res.status(404).send(e.message);
@@ -31,7 +31,7 @@ router
   })
   .put(async (req, res) => {
     try {
-      const user = await usersService.put(req.params.id, req.body);
+      const user = await usersService.put(req.params.userId, req.body);
       res.json(User.toResponse(user));
     } catch (e) {
       res.status(404).send(e.message);
@@ -39,7 +39,7 @@ router
   })
   .delete(async (req, res) => {
     try {
-      const users = await usersService.remove(req.params.id);
+      const users = await usersService.remove(req.params.userId);
       res.json(users.map(User.toResponse));
     } catch (e) {
       res.status(404).send(e.message);
