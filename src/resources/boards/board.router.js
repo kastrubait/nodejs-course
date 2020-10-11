@@ -5,33 +5,52 @@ const boardsService = require('./board.service');
 router
   .route('/')
   .post(async (req, res) => {
-    const board = await boardsService.add(
-      new Board({
-        title: req.body.title,
-        column: req.body.column
-      })
-    );
-    res.json(Board.toResponse(board));
+    try {
+      const board = await boardsService.add(
+        new Board({
+          title: req.body.title,
+          columns: req.body.columns
+        })
+      );
+      res.json(Board.toResponse(board));
+    } catch (e) {
+      res.status(404).send(e.message);
+    }
   })
-
   .get(async (req, res) => {
-    const boards = await boardsService.getAll();
-    res.json(boards.map(Board.toResponse));
+    try {
+      const boards = await boardsService.getAll();
+      res.json(boards.map(Board.toResponse));
+    } catch (e) {
+      res.status(404).send(e.message);
+    }
   });
 
 router
-  .route('/:id')
+  .route('/:boardId')
   .get(async (req, res) => {
-    const board = await boardsService.get(req.params.id);
-    res.json(Board.toResponse(board));
+    try {
+      const board = await boardsService.get(req.params.boardId);
+      res.json(Board.toResponse(board));
+    } catch (e) {
+      res.status(404).send(e.message);
+    }
   })
   .put(async (req, res) => {
-    const board = await boardsService.put(req.params.id, req.body);
-    res.json(Board.toResponse(board));
+    try {
+      const board = await boardsService.put(req.params.boardId, req.body);
+      res.json(Board.toResponse(board));
+    } catch (e) {
+      res.status(404).send(e.message);
+    }
   })
   .delete(async (req, res) => {
-    const boards = await boardsService.remove(req.params.id);
-    res.json(boards.map(Board.toResponse));
+    try {
+      const boards = await boardsService.remove(req.params.boardId);
+      res.json(boards.map(Board.toResponse));
+    } catch (e) {
+      res.status(404).send(e.message);
+    }
   });
 
 module.exports = router;

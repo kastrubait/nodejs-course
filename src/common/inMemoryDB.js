@@ -84,13 +84,13 @@ const deleteUser = async userId => {
   return DB_USERS.slice(0);
 };
 
-const deleteBoard = async id => {
-  const delPoz = DB_BOARDS.findIndex(item => item.id === id);
-  if (delPoz !== -1) {
+const deleteBoard = async boardId => {
+  const delPozBoard = DB_BOARDS.findIndex(item => item.id === boardId);
+  if (delPozBoard !== -1) {
     DB_TASKS.reduce((newArray, item) => {
-      return item.boardId === id ? newArray : [...newArray, item];
+      return item.boardId === boardId ? newArray : [...newArray, item];
     }, []);
-    DB_BOARDS.splice(delPoz, 1);
+    DB_BOARDS.splice(delPozBoard, 1);
   }
   return DB_BOARDS.slice(0);
 };
