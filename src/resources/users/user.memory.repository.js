@@ -1,27 +1,29 @@
 const DB = require('../../common/inMemoryDB');
+const table = 'USERS';
 
-const getAll = async () => DB.getAllUsers();
+const getAll = async () => DB.getAllSomething(table);
 
 const get = async userId => {
-  const user = DB.getUser(userId);
+  const user = DB.getSomething(table, userId);
   if (!user) {
-    throw new Error(`User id=${userId} was not found`);
+    throw new Error(`User id=${userId} not found`);
   }
   return user;
 };
 
-const create = async userData => DB.createUser(userData);
+const create = async userData => DB.createSomething(table, userData);
 
 const update = async (userId, userData) => {
-  const user = DB.updateUser(userId, userData);
-  if (!user) {
-    throw new Error(`User id=${userId} was not found`);
+  const userUpdete = DB.getSomething(table, userId);
+  if (!userUpdete) {
+    throw new Error(`User id=${userId} not found`);
   }
+  const user = DB.updateSomething(table, userId, userData);
   return user;
 };
 
 const remove = async userId => {
-  const user = DB.getUser(userId);
+  const user = DB.getSomething(table, userId);
   if (!user) {
     throw new Error(`User id=${userId} was not found`);
   }

@@ -45,11 +45,7 @@ router
   })
   .put(async (req, res) => {
     try {
-      const task = await tasksService.update(
-        req.params.boardId,
-        req.params.taskId,
-        req.body
-      );
+      const task = await tasksService.update(req.params.taskId, req.body);
       res.json(Task.toResponse(task));
     } catch (e) {
       res.status(404).send(e.message);
@@ -57,11 +53,11 @@ router
   })
   .delete(async (req, res) => {
     try {
-      const tasks = await tasksService.remove(
+      const taskId = await tasksService.remove(
         req.params.boardId,
         req.params.taskId
       );
-      res.json(tasks.map(Task.toResponse));
+      res.json(`Task id = ${taskId} deleted`);
     } catch (e) {
       res.status(404).send(e.message);
     }

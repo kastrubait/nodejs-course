@@ -1,43 +1,35 @@
 const DB = require('../../common/inMemoryDB');
+const table = 'TASKS';
 
 const getAll = async boardId => {
-  const board = DB.getBoard(boardId);
-  if (!board) {
-    throw new Error(`Board id=${boardId} was not found`);
-  }
-  return DB.getAllTasks(boardId);
+  const tasks = await DB.getAllSomething(table);
+  if (!tasks) return [];
+  return tasks.filter(task => task.boardId === boardId);
 };
 
 const get = async (boardId, taskId) => {
-  const board = DB.getBoard(boardId);
-  if (!board) {
-    throw new Error(`Board id=${boardId} was not found`);
+  const task = await DB.getSomething(table, taskId);
+  if (!task || task.boardId !== boardId) {
+    throw new Error(`Board id=${boardId} or task id=${taskId} not found`);
   }
-  return DB.getTask(taskId);
+  return task;
 };
 
 const create = async (boardId, taskData) => {
-  const board = DB.getBoard(boardId);
-  if (!board) {
-    throw new Error(`Board id=${boardId} was not found`);
-  }
-  return DB.createTask({ ...taskData, boardId });
+  return DB.createSomething(table, { ...taskData, boardId });
 };
 
-const update = async (boardId, taskId, taskData) => {
-  const board = DB.getBoard(boardId);
-  if (!board) {
-    throw new Error(`Board id=${boardId} was not found`);
-  }
-  return DB.updateTask(boardId, taskId, taskData);
+const update = async (taskId, taskData) => {
+  await get(taskData.boardId, taskId);
+  return DB.updateSomething(table, taskId, taskData);
 };
 
 const remove = async (boardId, taskId) => {
-  const board = DB.getBoard(boardId);
-  if (!board) {
-    throw new Error(`Board id=${boardId} was not found`);
+  const task = await DB.getSomething(table, taskId);
+  if (!task) {
+    throw new Error(`Task id=${taskId} not found`);
   }
-  return DB.deleteTask(boardId, taskId);
+  return DB.deleteSomething(table, taskId);
 };
 
 module.exports = { getAll, get, create, update, remove };
