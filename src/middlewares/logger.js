@@ -14,4 +14,13 @@ const eventLogger = (req, res, next) => {
   next();
 };
 
-module.exports = { eventLogger };
+const processErrorLogger = (message, errorType) => {
+  const time = new Date().toUTCString();
+  const errString = `${time} | ${errorType}: ${message}`;
+
+  winstonConsole.log('error', errString);
+  winstonFile.log('error', errString);
+  return winstonFile;
+};
+
+module.exports = { eventLogger, processErrorLogger };
