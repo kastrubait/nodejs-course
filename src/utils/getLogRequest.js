@@ -7,7 +7,7 @@ module.exports = req => {
 
   const time = new Date().toUTCString();
 
-  const inConsole = `request:
+  const toConsole = `request:
   {
     ${time},
     url: ${url},
@@ -16,7 +16,7 @@ module.exports = req => {
     query_params: ${params}
   }`;
 
-  const inFile = `{ ${time}, url: ${url}, method: ${method}, body: ${request}, query_params: ${params} }`;
+  const toFile = `{ ${time}, url: ${url}, method: ${method}, body: ${request}, query_params: ${params} }`;
 
-  return { inConsole, inFile };
+  return { toConsole, toFile };
 };

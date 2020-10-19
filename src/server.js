@@ -5,7 +5,9 @@ const { processErrorLogger } = require('./middlewares/logger');
 
 process
   .on('unhandledRejection', err => {
-    processErrorLogger(err.message, 'Unhandled Rejection');
+    const logger = processErrorLogger(err.message, 'Unhandled Rejection');
+    const { exit } = process;
+    logger.on('finish', () => exit(1));
   })
   .on('uncaughtException', err => {
     const logger = processErrorLogger(err.message, 'Uncaught Exception');
