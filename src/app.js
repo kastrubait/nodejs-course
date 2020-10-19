@@ -4,6 +4,7 @@ const path = require('path');
 const YAML = require('yamljs');
 
 const { eventLogger, errorLogger } = require('./middlewares/logger');
+const handleNonExistentRoutes = require('./middlewares/handleNotRoutes');
 
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
@@ -30,12 +31,6 @@ app.use('/users', userRouter);
 app.use('/boards', boardRouter);
 boardRouter.use('/:boardId/tasks', taskRouter);
 
-app.use(errorLogger);
-
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res.status(500).sent('ERROR');
-//   next();
-// });
+app.use(handleNonExistentRoutes, errorLogger);
 
 module.exports = app;

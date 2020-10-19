@@ -47,6 +47,7 @@ const deleteUser = async userId => {
 
 const deleteBoard = async boardId => {
   const delPozBoard = DB.BOARDS.findIndex(item => item.id === boardId);
+  const boardDelite = DB.BOARDS[delPozBoard];
   if (delPozBoard !== -1) {
     DB.TASKS = DB.TASKS.filter(item => item.boardId !== boardId);
     // DB_TASKS = DB_TASKS.reduce((newArray, item) => {
@@ -54,7 +55,7 @@ const deleteBoard = async boardId => {
     // }, []);
     DB.BOARDS.splice(delPozBoard, 1);
   }
-  return DB.BOARDS.slice(0);
+  return boardDelite;
 };
 
 module.exports = {

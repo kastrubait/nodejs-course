@@ -1,49 +1,69 @@
 const router = require('express').Router();
+const { BAD_REQUEST, NOT_FOUND, getStatusText } = require('http-status-codes');
+
 const User = require('./user.model');
 const usersService = require('./user.service');
+const { ErrorHandler, catchErrors } = require('../../common/error');
+const { ERRORS, MESSAGES } = require('../../common/constants');
 
 router
   .route('/')
-  .get(async (req, res) => {
-    const users = await usersService.getAll();
-    res.json(users.map(User.toResponse));
-  })
-  .post(async (req, res) => {
-    const user = await usersService.create(
-      new User({
-        login: req.body.login,
-        name: req.body.name,
-        password: req.body.password
-      })
-    );
-    res.json(User.toResponse(user));
-  });
+  .get(
+    catchErrors(async (req, res) => {
+      const users = await usersService.getAll();
+      res.json(users.map(User.toResponse));
+    })
+  )
+  .post(
+    catchErrors(async (req, res) => {
+      // const { name, login, password } = req.body;
+      // if (name && login && password) {
+      const user = await usersService.create(
+        new User({
+          login: req.body.login,
+          name: req.body.name,
+          password: req.body.password
+        })
+      );
+      res.json(User.toResponse(user));
+      // } else {
+      //   throw new ErrorHandler(BAD_REQUEST, getStatusText(BAD_REQUEST));
+      // }
+    })
+  );
 
 router
   .route('/:userId')
-  .get(async (req, res) => {
-    try {
-      const user = await usersService.get(req.params.userId);
+  .get(
+    catchErrors(async (req, res) => {
+      const { userId } = req.params;
+      const user = await usersService.get(userId);
+      if (!user) {
+        throw new ErrorHandler(NOT_FOUND, ERRORS.USER_NOT_FOUND);
+      }
       res.json(User.toResponse(user));
-    } catch (e) {
-      res.status(404).send(e.message);
-    }
-  })
-  .put(async (req, res) => {
-    try {
-      const user = await usersService.update(req.params.userId, req.body);
-      res.json(User.toResponse(user));
-    } catch (e) {
-      res.status(404).send(e.message);
-    }
-  })
-  .delete(async (req, res) => {
-    try {
-      const users = await usersService.remove(req.params.userId);
-      res.json(users.map(User.toResponse));
-    } catch (e) {
-      res.status(404).send(e.message);
-    }
-  });
+    })
+  )
+  .put(
+    catchErrors(async (req, res) => {
+      const { userId } = req.params;
+      const user = req.body;
+      const userUpdate = await usersService.update(userId, user);
+      if (!userUpdate) {
+        throw new ErrorHandler(BAD_REQUEST, getStatusText(BAD_REQUEST));
+      }
+      res.json(User.toResponse(userUpdate));
+    })
+  )
+  .delete(
+    catchErrors(async (req, res) => {
+      const { userId } = req.params;
+      const users = await usersService.remove(userId);
+      if (!users) {
+        throw new ErrorHandler(NOT_FOUND, ERRORS.USER_NOT_FOUND);
+      }
+      res.status(204).send(MESSAGES.DELETE_USER_SUCCESSFULL_MESSAGE);
+    })
+  );
 
 module.exports = router;
