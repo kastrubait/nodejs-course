@@ -1,19 +1,23 @@
 const router = require('express').Router({ mergeParams: true });
+const { BAD_REQUEST, NOT_FOUND, getStatusText } = require('http-status-codes');
 const Task = require('./task.model');
 const tasksService = require('./task.service');
+const { ErrorHandler, catchErrors } = require('../../common/error');
+const { ERRORS, MESSAGES } = require('../../common/constants');
 
 router
   .route('/')
-  .get(async (req, res) => {
-    try {
+  .get(
+    catchErrors(async (req, res) => {
       const tasks = await tasksService.getAll(req.params.boardId);
+      if (!tasks) {
+        throw new ErrorHandler(BAD_REQUEST, getStatusText(BAD_REQUEST));
+      }
       res.json(tasks.map(Task.toResponse));
-    } catch (e) {
-      res.status(404).send(e.message);
-    }
-  })
-  .post(async (req, res) => {
-    try {
+    })
+  )
+  .post(
+    catchErrors(async (req, res) => {
       const task = await tasksService.create(
         req.params.boardId,
         new Task({
@@ -24,11 +28,12 @@ router
           columnId: null
         })
       );
+      if (!task) {
+        throw new ErrorHandler(BAD_REQUEST, getStatusText(BAD_REQUEST));
+      }
       res.json(Task.toResponse(task));
-    } catch (e) {
-      res.status(404).send(e.message);
-    }
-  });
+    })
+  );
 
 router
   .route('/:taskId')
@@ -43,28 +48,21 @@ router
       res.status(404).send(e.message);
     }
   })
-  .put(async (req, res) => {
-    try {
-      const task = await tasksService.update(
-        req.params.boardId,
-        req.params.taskId,
-        req.body
-      );
+  .put(
+    catchErrors(async (req, res) => {
+      const task = await tasksService.update(req.params.taskId, req.body);
       res.json(Task.toResponse(task));
-    } catch (e) {
-      res.status(404).send(e.message);
-    }
-  })
-  .delete(async (req, res) => {
-    try {
-      const tasks = await tasksService.remove(
+    })
+  )
+  .delete(
+    catchErrors(async (req, res) => {
+      const taskId = await tasksService.remove(
         req.params.boardId,
         req.params.taskId
       );
-      res.json(tasks.map(Task.toResponse));
-    } catch (e) {
-      res.status(404).send(e.message);
-    }
-  });
+      if (!taskId) throw new ErrorHandler(NOT_FOUND, ERRORS.TASK_NOT_FOUND);
+      res.status(204).send(MESSAGES.DELETE_TASK_SUCCESSFULL_MESSAGE);
+    })
+  );
 
 module.exports = router;

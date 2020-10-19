@@ -1,11 +1,15 @@
 const router = require('express').Router();
+const { BAD_REQUEST, NOT_FOUND, getStatusText } = require('http-status-codes');
+
 const Board = require('./board.model');
 const boardsService = require('./board.service');
+const { ErrorHandler, catchErrors } = require('../../common/error');
+const { ERRORS, MESSAGES } = require('../../common/constants');
 
 router
   .route('/')
-  .post(async (req, res) => {
-    try {
+  .post(
+    catchErrors(async (req, res) => {
       const board = await boardsService.add(
         new Board({
           title: req.body.title,
@@ -13,44 +17,43 @@ router
         })
       );
       res.json(Board.toResponse(board));
-    } catch (e) {
-      res.status(404).send(e.message);
-    }
-  })
-  .get(async (req, res) => {
-    try {
+    })
+  )
+  .get(
+    catchErrors(async (req, res) => {
       const boards = await boardsService.getAll();
       res.json(boards.map(Board.toResponse));
-    } catch (e) {
-      res.status(404).send(e.message);
-    }
-  });
+    })
+  );
 
 router
   .route('/:boardId')
-  .get(async (req, res) => {
-    try {
+  .get(
+    catchErrors(async (req, res) => {
       const board = await boardsService.get(req.params.boardId);
+      if (!board) {
+        throw new ErrorHandler(NOT_FOUND, ERRORS.BOARD_NOT_FOUND);
+      }
       res.json(Board.toResponse(board));
-    } catch (e) {
-      res.status(404).send(e.message);
-    }
-  })
-  .put(async (req, res) => {
-    try {
+    })
+  )
+  .put(
+    catchErrors(async (req, res) => {
       const board = await boardsService.update(req.params.boardId, req.body);
+      if (!board) {
+        throw new ErrorHandler(BAD_REQUEST, getStatusText(BAD_REQUEST));
+      }
       res.json(Board.toResponse(board));
-    } catch (e) {
-      res.status(404).send(e.message);
-    }
-  })
-  .delete(async (req, res) => {
-    try {
-      const boards = await boardsService.remove(req.params.boardId);
-      res.json(boards.map(Board.toResponse));
-    } catch (e) {
-      res.status(404).send(e.message);
-    }
-  });
+    })
+  )
+  .delete(
+    catchErrors(async (req, res) => {
+      const board = await boardsService.remove(req.params.boardId);
+      if (!board) {
+        throw new ErrorHandler(NOT_FOUND, ERRORS.BOARD_NOT_FOUND);
+      }
+      res.status(204).send(MESSAGES.DELETE_BOARD_SUCCESSFULL_MESSAGE);
+    })
+  );
 
 module.exports = router;

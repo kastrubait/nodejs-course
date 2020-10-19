@@ -1,4 +1,5 @@
 const boardsRepo = require('./board.memory.repository');
+const tasksService = require('../tasks/task.service');
 
 const getAll = () => boardsRepo.getAll();
 
@@ -8,6 +9,10 @@ const get = boardId => boardsRepo.get(boardId);
 
 const update = (boardId, boardData) => boardsRepo.update(boardId, boardData);
 
-const remove = boardId => boardsRepo.remove(boardId);
+const remove = async boardId => {
+  const tasksInBoard = await tasksService.getAll(boardId);
+  tasksInBoard.forEach(async task => await tasksService.remove(task.id));
+  return boardsRepo.remove(boardId);
+};
 
 module.exports = { getAll, add, get, update, remove };
