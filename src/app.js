@@ -3,7 +3,7 @@ const swaggerUI = require('swagger-ui-express');
 const path = require('path');
 const YAML = require('yamljs');
 
-const { eventLogger } = require('./middlewares/logger');
+const { eventLogger, errorLogger } = require('./middlewares/logger');
 
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
@@ -30,10 +30,12 @@ app.use('/users', userRouter);
 app.use('/boards', boardRouter);
 boardRouter.use('/:boardId/tasks', taskRouter);
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).sent('ERROR');
-  next();
-});
+app.use(errorLogger);
+
+// app.use((err, req, res, next) => {
+//   console.error(err.stack);
+//   res.status(500).sent('ERROR');
+//   next();
+// });
 
 module.exports = app;

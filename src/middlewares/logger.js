@@ -2,15 +2,29 @@ const { createLogger } = require('winston');
 
 const { configConsole, configFile } = require('./configLogger');
 const getLogRequest = require('../utils/getLogRequest');
+const { handleError } = require('../common/error');
 
 const winstonConsole = createLogger(configConsole);
 const winstonFile = createLogger(configFile);
 
 const eventLogger = (req, res, next) => {
-  const { inConsole, inFile } = getLogRequest(req);
+  const { toConsole, toFile } = getLogRequest(req);
 
-  winstonConsole.log('info', inConsole);
-  winstonFile.log('info', inFile);
+  winstonConsole.log('info', toConsole);
+  winstonFile.log('info', toFile);
+  next();
+};
+
+const errorLogger = (err, req, res, next) => {
+  const { statusCode, message } = handleError(err, res);
+
+  const level = statusCode >= 400 && statusCode < 500 ? 'warn' : 'error';
+
+  const { toFile } = getLogRequest(req);
+  const time = new Date().toUTCString();
+  const errString = `${time} | Error ${statusCode}: ${message}`;
+  winstonConsole.log(level, errString);
+  winstonFile.log(level, `${errString} | Request: ${toFile}`);
   next();
 };
 
@@ -23,4 +37,4 @@ const processErrorLogger = (message, errorType) => {
   return winstonFile;
 };
 
-module.exports = { eventLogger, processErrorLogger };
+module.exports = { eventLogger, errorLogger, processErrorLogger };
