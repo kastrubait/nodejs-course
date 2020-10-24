@@ -37,8 +37,7 @@ router
   .route('/:userId')
   .get(
     catchErrors(async (req, res) => {
-      const { userId } = req.params;
-      const user = await usersService.get(userId);
+      const user = await usersService.get(req.params.userId);
       if (!user) {
         throw new ErrorHandler(NOT_FOUND, ERRORS.USER_NOT_FOUND);
       }
@@ -47,9 +46,7 @@ router
   )
   .put(
     catchErrors(async (req, res) => {
-      const { userId } = req.params;
-      const user = req.body;
-      const userUpdate = await usersService.update(userId, user);
+      const userUpdate = await usersService.update(req.params.userId, req.body);
       if (!userUpdate) {
         throw new ErrorHandler(BAD_REQUEST, getStatusText(BAD_REQUEST));
       }
