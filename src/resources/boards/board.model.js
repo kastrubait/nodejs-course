@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const uuid = require('uuid');
 
 const Board = new Schema(
   {
@@ -7,6 +8,10 @@ const Board = new Schema(
     columns: {
       type: Array,
       default: []
+    },
+    _id: {
+      type: String,
+      default: uuid
     }
   },
   { collections: 'boards' }

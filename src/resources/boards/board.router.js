@@ -6,11 +6,10 @@ const {
   getStatusText
 } = require('http-status-codes');
 
-const { Board } = require('./board.model');
+const { Board, toResponse } = require('./board.model');
 const boardsService = require('./board.service');
 const { ErrorHandler, catchErrors } = require('../../common/error');
 const { ERRORS, MESSAGES } = require('../../common/constants');
-const { toResponse } = require('./board.model');
 
 router
   .route('/')
