@@ -6,7 +6,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 
 const { eventLogger, errorLogger } = require('./middlewares/logger');
-const handleNonExistentRoutes = require('./middlewares/handleNotRoutes');
 
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
@@ -36,6 +35,6 @@ app.use('/users', userRouter);
 app.use('/boards', boardRouter);
 boardRouter.use('/:boardId/tasks', taskRouter);
 
-app.use(handleNonExistentRoutes, errorLogger);
+app.use(errorLogger);
 
 module.exports = app;

@@ -14,6 +14,7 @@ const connectToDB = cb => {
     console.error.bind(console, 'MongoDB connection error:')
   ).once('open', async () => {
     console.log('Successfully connecr to DB');
+    // db.dropDatabase();
     cb();
   });
 };
