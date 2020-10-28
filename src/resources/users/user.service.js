@@ -1,13 +1,23 @@
 const usersRepo = require('./user.DB.repository');
+const tasksRepo = require('../tasks/task.DB.repository');
 
-const getAll = () => usersRepo.getAll();
+const getAll = async () => await usersRepo.getAll();
 
-const get = userId => usersRepo.get(userId);
+const get = async userId => await usersRepo.get(userId);
 
-const create = userData => usersRepo.create(userData);
+const create = async userData => await usersRepo.create(userData);
 
-const update = (userId, userData) => usersRepo.update(userId, userData);
+const update = async (userId, userData) =>
+  await usersRepo.update(userId, userData);
 
-const remove = userId => usersRepo.remove(userId);
+const remove = async userId => {
+  const getAllTask = await tasksRepo.getAll();
+  const tasks = getAllTask.filter(task => task.userId === userId);
+  for (const task of tasks) {
+    await tasksRepo.update(task.id, { ...task, userId: null });
+  }
+  const isDel = await usersRepo.remove(userId);
+  return isDel;
+};
 
 module.exports = { getAll, get, create, update, remove };
