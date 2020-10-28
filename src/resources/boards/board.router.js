@@ -1,13 +1,24 @@
 const router = require('express').Router();
-const { BAD_REQUEST, NOT_FOUND, getStatusText } = require('http-status-codes');
+const {
+  OK,
+  BAD_REQUEST,
+  NOT_FOUND,
+  getStatusText
+} = require('http-status-codes');
 
-const Board = require('./board.model');
+const { Board, toResponse } = require('./board.model');
 const boardsService = require('./board.service');
 const { ErrorHandler, catchErrors } = require('../../common/error');
 const { ERRORS, MESSAGES } = require('../../common/constants');
 
 router
   .route('/')
+  .get(
+    catchErrors(async (req, res) => {
+      const boards = await boardsService.getAll();
+      res.json(boards.map(toResponse));
+    })
+  )
   .post(
     catchErrors(async (req, res) => {
       const board = await boardsService.add(
@@ -16,13 +27,7 @@ router
           columns: req.body.columns
         })
       );
-      res.json(Board.toResponse(board));
-    })
-  )
-  .get(
-    catchErrors(async (req, res) => {
-      const boards = await boardsService.getAll();
-      res.json(boards.map(Board.toResponse));
+      res.status(OK).send(toResponse(board));
     })
   );
 
@@ -34,16 +39,19 @@ router
       if (!board) {
         throw new ErrorHandler(NOT_FOUND, ERRORS.BOARD_NOT_FOUND);
       }
-      res.json(Board.toResponse(board));
+      res.status(OK).send(toResponse(board));
     })
   )
   .put(
     catchErrors(async (req, res) => {
-      const board = await boardsService.update(req.params.boardId, req.body);
-      if (!board) {
+      const boardUpdate = await boardsService.update(
+        req.params.boardId,
+        req.body
+      );
+      if (!boardUpdate) {
         throw new ErrorHandler(BAD_REQUEST, getStatusText(BAD_REQUEST));
       }
-      res.json(Board.toResponse(board));
+      res.status(OK).send(toResponse(boardUpdate));
     })
   )
   .delete(
