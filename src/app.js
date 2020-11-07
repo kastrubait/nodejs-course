@@ -7,9 +7,11 @@ const helmet = require('helmet');
 
 const { eventLogger, errorLogger } = require('./middlewares/logger');
 
+const loginRouter = require('./resources/login/login.router');
 const userRouter = require('./resources/users/user.router');
 const boardRouter = require('./resources/boards/board.router');
 const taskRouter = require('./resources/tasks/task.router');
+const checkToken = require('./middlewares/checkToken');
 
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
@@ -29,8 +31,9 @@ app.use('/', (req, res, next) => {
   next();
 });
 
-app.use(eventLogger);
+app.use(eventLogger, checkToken);
 
+app.use('/login', loginRouter);
 app.use('/users', userRouter);
 app.use('/boards', boardRouter);
 boardRouter.use('/:boardId/tasks', taskRouter);
