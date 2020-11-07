@@ -22,7 +22,7 @@ const remove = async userId => {
   const getAllTask = await tasksRepo.getAll();
   const tasks = getAllTask.filter(task => task.userId === userId);
   for (const task of tasks) {
-    await tasksRepo.update(task.id, { ...task, userId: null });
+    await tasksRepo.update(task.id, { ...task.toObject(), userId: null });
   }
   const isDel = await usersRepo.remove(userId);
   return isDel;

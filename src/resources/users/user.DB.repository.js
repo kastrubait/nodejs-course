@@ -14,7 +14,7 @@ const get = async id => {
 };
 
 const getByLogin = async ({ login }) => {
-  const user = (await User.find({ login }).exec())[0];
+  const user = await User.findOne({ login });
   return user;
 };
 

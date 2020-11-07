@@ -13,6 +13,6 @@ const MESSAGES = {
 
 const DEFAULT_SALT_ROUNDS = 10;
 
-const PATH_WHITELIST = ['/', '/login', '/login/', '/doc', '/doc/', '/smthng'];
+const PATH_WHITELIST = ['/', '/login', '/login/', '/doc', '/doc/'];
 
 module.exports = { ERRORS, MESSAGES, DEFAULT_SALT_ROUNDS, PATH_WHITELIST };

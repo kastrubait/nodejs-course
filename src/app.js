@@ -5,7 +5,7 @@ const YAML = require('yamljs');
 const cors = require('cors');
 const helmet = require('helmet');
 
-const { eventLogger, errorLogger } = require('./middlewares/logger');
+const { errorLogger } = require('./middlewares/logger');
 
 const loginRouter = require('./resources/login/login.router');
 const userRouter = require('./resources/users/user.router');
@@ -30,10 +30,9 @@ app.use('/', (req, res, next) => {
   }
   next();
 });
-
-app.use(eventLogger, checkToken);
-
 app.use('/login', loginRouter);
+app.use(checkToken);
+
 app.use('/users', userRouter);
 app.use('/boards', boardRouter);
 boardRouter.use('/:boardId/tasks', taskRouter);
